@@ -1,11 +1,12 @@
 import { DayType } from './day-type.model';
 import { WeekDay } from './week-day.model';
+import { Month } from './month.model';
 
 
 export interface Day {
     dayType: DayType;
 
-    month: number;
+    month: Month;
 
     monthDay: number;
 
