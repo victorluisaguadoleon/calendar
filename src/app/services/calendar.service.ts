@@ -1,5 +1,7 @@
 import { DayType } from '../models/day-type.model';
 import { WeekDay } from '../models/week-day.model';
+import { Month } from '../models/month.model';
+import { Day } from '../models/day.model';
 
 
 export class CalendarService {
@@ -14,6 +16,23 @@ export class CalendarService {
 
     public static isLeapYear(year: number): boolean {
         return (year % 4 === 0) && (year % 100 !== 0 || year % 400 === 0);
+    }
+
+    public getDays(day: number, month: number, year: number, numberOfDays: number): Day[] {
+        const weekDay = this.getWeekDay(day, month, year);
+        const result: Day[] = [];
+
+        for (let i = 0; i < weekDay; i++) {
+            const monthDay: Day = {
+                dayType: DayType.Invalid,
+                weekDay: i
+            };
+            result.push(monthDay);
+        }
+
+        // TODO: Add not invalid days.
+
+        return result;
     }
 
     public getMonthDayCount(month: number, year: number): number {

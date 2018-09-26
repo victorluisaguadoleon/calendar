@@ -6,11 +6,11 @@ import { Month } from './month.model';
 export interface Day {
     dayType: DayType;
 
-    month: Month;
+    month?: Month;
 
-    monthDay: number;
+    monthDay?: number;
 
     weekDay: WeekDay;
 
-    year: number;
+    year?: number;
 }

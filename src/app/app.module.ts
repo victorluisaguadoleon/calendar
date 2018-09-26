@@ -8,6 +8,8 @@ import { routing } from './app.routing';
 
 import { HomeModule } from './views/home/home.module';
 
+import { CalendarService } from './services/calendar.service';
+
 @NgModule({
   declarations: [
     AppComponent
@@ -20,7 +22,9 @@ import { HomeModule } from './views/home/home.module';
     // Views
     HomeModule
   ],
-  providers: [],
+  providers: [
+    { provide: CalendarService, useClass: CalendarService },
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
