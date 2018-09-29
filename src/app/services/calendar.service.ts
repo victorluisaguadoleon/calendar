@@ -2,6 +2,7 @@ import { DayType } from '../models/day-type.model';
 import { WeekDay } from '../models/week-day.model';
 import { Month } from '../models/month.model';
 import { Day } from '../models/day.model';
+import { MonthDays } from '../models/month-days.model';
 
 
 export class CalendarService {
@@ -20,6 +21,7 @@ export class CalendarService {
 
     public getDays(day: number, month: number, year: number, numberOfDays: number): Day[] {
         let weekDay = this.getWeekDay(day, month, year);
+        console.log(weekDay);
         const result: Day[] = [];
 
         for (let i = 0; i < weekDay; i++) {
@@ -65,6 +67,35 @@ export class CalendarService {
         return result;
     }
 
+    public getMonths(day: number, month: number, year: number, numberOfDays: number): MonthDays[] {
+        const days = this.getDays(day, month, year, numberOfDays);
+        const result: MonthDays[] = [];
+        let firstMonth: MonthDays = { month: 0, days: [], year: 0 };
+        let i = 0;
+        while (i < days.length && days[i].dayType === DayType.Invalid) {
+            firstMonth.days.push(days[i]);
+
+            i++;
+        }
+
+        while (i < days.length) {
+            firstMonth.days.push(days[i]);
+            if (days[i].dayType !== DayType.Invalid) {
+                firstMonth.month = days[i].month;
+                firstMonth.year = days[i].year;
+            }
+
+            i++;
+            if (days[i].dayType !== DayType.Invalid && days[i].month !== firstMonth.month) {
+                result.push(firstMonth);
+
+                firstMonth = { month: 0, days: [], year: 0 };
+            }
+        }
+
+        return result;
+    }
+
     public getMonthDayCount(month: number, year: number): number {
         if (month === 2 && CalendarService.isLeapYear(year)) {
             return this.monthDayCount[month - 1] + 1;
@@ -74,9 +105,20 @@ export class CalendarService {
     }
 
     public getWeekDay(day: number, month: number, year: number): WeekDay {
-        const mod = (day + this.monthRest[month - 1] + (((year % 400) / 100) * 5)
-            + ((((year % 400) % 100) - 1) / 4) + (((year % 400) % 100) - 1)) % 7;
+        const div1 = (year % 400) - ((year % 400) % 100);
+        const div2 = (((year % 400) % 100) - 1) - ((((year % 400) % 100) - 1) % 4);
 
-        return ((year % 400 !== 0) && (year % 4 === 0) && (month >= 3)) ? mod + 1 : mod;
+        let mod = (day + this.monthRest[month - 1] + ((div1 / 100) * 5)
+            + (div2 / 4) + (((year % 400) % 100) - 1)) % 7;
+
+        if ((year % 400 !== 0) && (year % 4 === 0)) {
+            if (month >= 3) {
+                mod = mod + 1;
+            } else {
+                mod = mod - 1;
+            }
+        }
+
+        return mod + 1;
     }
 }
