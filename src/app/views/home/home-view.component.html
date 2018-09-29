@@ -42,7 +42,7 @@
           </div>
           <div class="month-days">
             <div *ngFor='let week of getWeeks(monthDays)' class="week">
-              <div class="month-day" *ngFor='let day of week'>
+              <div [class]="'month-day ' + dayTypeToClass(day.dayType)" *ngFor='let day of week'>
                 <span>{{ day.monthDay }}</span>
               </div>
             </div>

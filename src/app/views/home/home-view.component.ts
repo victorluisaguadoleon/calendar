@@ -3,6 +3,7 @@ import { CalendarService } from '../../services/calendar.service';
 import { Day } from '../../models/day.model';
 import {IMyDpOptions} from 'mydatepicker';
 import { MonthDays } from '../../models/month-days.model';
+import { DayType } from '../../models/day-type.model';
 
 
 @Component({
@@ -72,5 +73,9 @@ export class HomeViewComponent implements OnInit {
         console.log(result);
 
         return result;
+    }
+
+    private dayTypeToClass(value: number): any {
+        return DayType[value].split(/(?=[A-Z])/).join().replace(',', ' ').toLowerCase();
     }
 }
