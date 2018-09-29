@@ -19,7 +19,7 @@ export class CalendarService {
     }
 
     public getDays(day: number, month: number, year: number, numberOfDays: number): Day[] {
-        const weekDay = this.getWeekDay(day, month, year);
+        let weekDay = this.getWeekDay(day, month, year);
         const result: Day[] = [];
 
         for (let i = 0; i < weekDay; i++) {
@@ -30,7 +30,37 @@ export class CalendarService {
             result.push(monthDay);
         }
 
-        // TODO: Add not invalid days.
+        for (let i = 0; i < numberOfDays; i++) {
+            const monthDayCount = this.getMonthDayCount(month, year);
+            const monthDay: Day = {
+                dayType: (weekDay === WeekDay.Saturday || weekDay === WeekDay.Sunday) ? DayType.Weekend : DayType.Regular,
+                month: month,
+                monthDay: day,
+                weekDay: weekDay,
+                year: year
+            };
+            result.push(monthDay);
+
+            weekDay = (weekDay + 1) % 7;
+            day++;
+            if (day > monthDayCount) {
+                day = 1;
+                month++;
+            }
+
+            if (month > 12) {
+                month = 1;
+                year++;
+            }
+        }
+
+        for (let i = weekDay; i < 7; i++) {
+            const monthDay: Day = {
+                dayType: DayType.Invalid,
+                weekDay: i
+            };
+            result.push(monthDay);
+        }
 
         return result;
     }
