@@ -1,3 +1,54 @@
 <div class="main-content">
-  <h1>Hello!!!</h1>
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h3 class="text-center header-text">Calendar Test</h3>
+      </div>
+      <div class="col-sm-4">
+        <my-date-picker name="mydate" [options]="myDatePickerOptions"
+                    [(ngModel)]="date"></my-date-picker>
+      </div>
+      <div class="col-sm-4">          
+        <ng2-numeric-input
+          decimal-length="0"
+          [(ngModel)]="numberOfDay">
+        </ng2-numeric-input>
+      </div>
+      <div class="col-sm-4">
+
+      </div>
+      <div class="col-12">
+          <div class="text-center generate-button">
+              <button type="button" class="btn btn-primary" (click)="refreshCalendar()">Generate</button>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="container calendar">
+    <div class="row">
+      <div class="col-sm-6 col-md-4" *ngFor="let monthDays of calendar">
+        <div class="month">
+          <div class="weekdays">
+            <div class="weekday"><span>S</span></div>
+            <div class="weekday"><span>M</span></div>
+            <div class="weekday"><span>T</span></div>
+            <div class="weekday"><span>W</span></div>
+            <div class="weekday"><span>T</span></div>
+            <div class="weekday"><span>F</span></div>
+            <div class="weekday"><span>S</span></div>
+          </div>
+          <div class="month-year">
+            {{ monthDays.month }} {{ monthDays.year }}
+          </div>
+          <div class="month-days">
+            <div *ngFor='let week of getWeeks(monthDays)' class="week">
+              <div class="month-day" *ngFor='let day of week'>
+                <span>{{ day.monthDay }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

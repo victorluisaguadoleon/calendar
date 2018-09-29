@@ -78,7 +78,18 @@ export class CalendarService {
             i++;
         }
 
+        if (i < days.length) {
+            firstMonth.month = days[i].month;
+            firstMonth.year = days[i].year;
+        }
+
         while (i < days.length) {
+            if (days[i].dayType !== DayType.Invalid && days[i].month !== firstMonth.month) {
+                result.push(firstMonth);
+
+                firstMonth = { month: 0, days: [], year: 0 };
+            }
+
             firstMonth.days.push(days[i]);
             if (days[i].dayType !== DayType.Invalid) {
                 firstMonth.month = days[i].month;
@@ -86,12 +97,9 @@ export class CalendarService {
             }
 
             i++;
-            if (days[i].dayType !== DayType.Invalid && days[i].month !== firstMonth.month) {
-                result.push(firstMonth);
-
-                firstMonth = { month: 0, days: [], year: 0 };
-            }
         }
+
+        result.push(firstMonth);
 
         return result;
     }

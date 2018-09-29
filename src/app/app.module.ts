@@ -1,6 +1,9 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 
@@ -17,7 +20,10 @@ import { CalendarService } from './services/calendar.service';
   imports: [
     BrowserModule,
     RouterModule,
+    CommonModule,
     routing,
+    BsDropdownModule.forRoot(),
+    FormsModule,
 
     // Views
     HomeModule
