@@ -121,6 +121,10 @@ export class CalendarService {
         return result;
     }
 
+    public getMonthsWithHoliday(day: number, month: number, year: number, numberOfDays: number, countryCode: string): MonthDays[] {
+        return this.getMonths(day, month, year, numberOfDays);
+    }
+
     public getMonthDayCount(month: number, year: number): number {
         if (month === 2 && CalendarService.isLeapYear(year)) {
             return this.monthDayCount[month - 1] + 1;
