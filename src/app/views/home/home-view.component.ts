@@ -25,6 +25,8 @@ export class HomeViewComponent implements OnInit {
 
     public calendar: MonthDays[];
 
+    public showError: boolean;
+
     constructor(@Inject(CalendarService) public calendarService: CalendarService,
         @Inject(HolidayService) public holidayService: HolidayService) {
      }
@@ -38,8 +40,7 @@ export class HomeViewComponent implements OnInit {
             dateFormat: 'dd/mm/yyyy',
             firstDayOfWeek : 'su'
         };
-
-        this.refreshCalendar();
+        this.showError = false;
     }
 
     public refreshCalendar() {
@@ -51,6 +52,8 @@ export class HomeViewComponent implements OnInit {
             }
 
             this.setHolidays(newCalendar, years, this.countryCode, 0);
+        } else {
+            this.calendar = newCalendar;
         }
     }
 
@@ -74,9 +77,11 @@ export class HomeViewComponent implements OnInit {
 
     private getCalendarMonthDays(): MonthDays[] {
         if (this.date === null || this.numberOfDay === undefined || this.numberOfDay === null || this.numberOfDay === 0) {
+            this.showError = true;
             return [];
         }
 
+        this.showError = false;
         const day = this.date.date.day;
         const month = this.date.date.month;
         const year = this.date.date.year;

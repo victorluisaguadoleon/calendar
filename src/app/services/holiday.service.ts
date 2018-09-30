@@ -46,14 +46,7 @@ export class HolidayService {
         const currentDate = new Date(Date.now());
 
         if (!this.signature || currentDate > this.expireDate) {
-            const expireDate = new Date(Date.now());
-            expireDate.setTime(expireDate.getTime() + (10 * 60 * 1000));
-
-            const message = this.holidayAccessKey + this.holidayEndPoint + expireDate.toISOString();
-            const signature = CryptoJS.HmacSHA1(message, this.holidaySecretKey);
-
-            this.signature = signature;
-            this.expireDate = expireDate;
+            this.generateSignature();
         }
 
         let urlParam: HttpParams = new HttpParams();
@@ -69,9 +62,10 @@ export class HolidayService {
         urlParam = urlParam.append(TYPES_PARAM, TYPES_PARAM_VALUE);
         return this.httpClient.get<HolidayCollection>(endPointUrl, { params: urlParam })
             .pipe(map((response: HolidayCollection) => {
-                console.log(response);
                 const result: SimpleDay[] = [];
                 if (response.errors && response.errors.length > 0) {
+                    this.generateSignature();
+
                     return result;
                 }
 
@@ -90,5 +84,16 @@ export class HolidayService {
 
                 return result;
             }));
+    }
+
+    private generateSignature() {
+        const expireDate = new Date(Date.now());
+        expireDate.setTime(expireDate.getTime() + (10 * 60 * 1000));
+
+        const message = this.holidayAccessKey + this.holidayEndPoint + expireDate.toISOString();
+        const signature = CryptoJS.HmacSHA1(message, this.holidaySecretKey);
+
+        this.signature = signature;
+        this.expireDate = expireDate;
     }
 }

@@ -4,6 +4,11 @@
       <div class="col-12">
         <h3 class="text-center header-text">Calendar Test</h3>
       </div>
+      <div class="col-12">
+          <div *ngIf="showError" class="alert alert-danger text-center" role="alert">
+              Some input is invalid.
+            </div>
+      </div>
       <div class="col-sm-4">
         <my-date-picker name="mydate" [options]="myDatePickerOptions"
                     [(ngModel)]="date"></my-date-picker>
