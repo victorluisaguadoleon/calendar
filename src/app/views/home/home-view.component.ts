@@ -30,6 +30,7 @@ export class HomeViewComponent implements OnInit {
         const date = new Date();
         this.date = { date: { year: date.getFullYear(), month: date.getMonth(), day: date.getDay() } };
         this.numberOfDay = 0;
+        this.countryCode = '';
         this.myDatePickerOptions = {
             dateFormat: 'dd/mm/yyyy',
         };
