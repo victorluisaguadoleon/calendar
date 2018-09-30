@@ -11,7 +11,7 @@
       <div class="col-sm-4">          
         <ng2-numeric-input
           decimal-length="0"
-          [(ngModel)]="numberOfDay">
+          [(ngModel)]="numberOfDay" (keyup.enter)="refreshCalendar()">
         </ng2-numeric-input>
       </div>
       <div class="col-sm-4">
@@ -43,7 +43,7 @@
           <div class="month-days">
             <div *ngFor='let week of getWeeks(monthDays)' class="week">
               <div [class]="'month-day ' + dayTypeToClass(day.dayType)" *ngFor='let day of week'>
-                <span>{{ day.monthDay }}</span>
+                <div class="month-day-text">{{ day.monthDay }}</div>
               </div>
             </div>
           </div>

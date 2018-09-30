@@ -60,7 +60,7 @@ export class HomeViewComponent implements OnInit {
     }
 
     private getCalendarMonthDays(): MonthDays[] {
-        if (this.date === null || this.numberOfDay === null || this.numberOfDay === 0) {
+        if (this.date === null || this.numberOfDay === undefined || this.numberOfDay === null || this.numberOfDay === 0) {
             return [];
         }
 

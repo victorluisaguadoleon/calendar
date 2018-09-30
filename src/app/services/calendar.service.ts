@@ -87,9 +87,11 @@ export class CalendarService {
         while (i < days.length) {
             if (days[i].dayType !== DayType.Invalid && days[i].month !== firstMonth.month) {
                 result.push(firstMonth);
-                for (let j = days[i].weekDay; j < 7; j++) {
-                    const invalidDay: Day = { weekDay: j, dayType: DayType.Invalid };
-                    firstMonth.days.push(invalidDay);
+                if (days[i].weekDay !== WeekDay.Sunday) {
+                    for (let j = days[i].weekDay; j < 7; j++) {
+                        const invalidDay: Day = { weekDay: j, dayType: DayType.Invalid };
+                        firstMonth.days.push(invalidDay);
+                    }
                 }
 
                 firstMonth = { month: 0, days: [], year: 0 };

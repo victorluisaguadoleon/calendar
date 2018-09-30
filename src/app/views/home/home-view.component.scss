@@ -15,8 +15,10 @@
         .month {
             text-align: center;
             padding-bottom: 30px;
-            
+
             .weekdays {    
+                height: 30px;
+
                 .weekday {
                     position: relative;
                     display: inline-block;
@@ -34,8 +36,9 @@
             .month-year {
                 display: inline-block;
                 text-align: center;
-                background-color: rgb(23, 102, 23);;
-                width: 210px;
+                background-color: rgb(123, 247, 123);;
+                width: 210px;                
+                line-height: 2.0;
             }
 
             .month-days {
@@ -48,27 +51,28 @@
                         display: inline-block;
                         width: 30px;
                         height: 30px;
+                        border: 1px solid white;
 
-                        > span {
+                        .month-day-text {
                             position: absolute;
-                            top: 3px;
-                            left: 10px;
+                            width: 100%;
+                            top: 5px;
                         }
 
                         &.invalid {
-                            background-color: gray;
+                            background-color: rgb(179, 175, 175);
                         }
 
                         &.regular {
-                            background-color: green;
+                            background-color: rgb(43, 156, 43);
                         }
 
                         &.weekend {
-                            background-color: rgb(190, 190, 24);
+                            background-color: rgb(255, 255, 19);
                         }
 
                         &.holiday {
-                            background-color: darkred
+                            background-color: rgb(255, 103, 15)
                         }
                     }
                 }
