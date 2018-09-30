@@ -55,12 +55,14 @@ export class CalendarService {
             }
         }
 
-        for (let i = weekDay; i < 7; i++) {
-            const monthDay: Day = {
-                dayType: DayType.Invalid,
-                weekDay: i
-            };
-            result.push(monthDay);
+        if (weekDay !== WeekDay.Sunday) {
+            for (let i = weekDay; i < 7; i++) {
+                const monthDay: Day = {
+                    dayType: DayType.Invalid,
+                    weekDay: i
+                };
+                result.push(monthDay);
+            }
         }
 
         return result;
