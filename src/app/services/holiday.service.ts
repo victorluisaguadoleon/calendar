@@ -26,24 +26,35 @@ export const EXPIRES_TIME = 10;
 export const SIGNATURE_PARAM = 'signature';
 export const TIMESPAN_PARAM = 'timestamp';
 export const TYPES_PARAM = 'types';
-export const TYPES_PARAM_VALUE = 'all'; 
+export const TYPES_PARAM_VALUE = 'all';
 
 export class HolidayService {
+    private signature: string;
+
+    private expireDate: Date;
 
     constructor(@Inject(HttpClient) private httpClient: HttpClient,
         @Inject(HOLIDAY_SERVER_URL) private holidayServerUrl: string,
         @Inject(HOLIDAY_ACCESS_KEY) private holidayAccessKey: string,
         @Inject(HOLIDAY_SECRET_KEY) private holidaySecretKey: string,
         @Inject(HOLIDAY_END_POINT) private holidayEndPoint: string) {
-
+        this.signature = null;
+        this.expireDate = new Date();
     }
 
     public getHolidays(year: number, countryCode: string): Observable<SimpleDay[]> {
         const currentDate = new Date(Date.now());
-        console.log(currentDate.toISOString());
-        const message = this.holidayAccessKey + this.holidayEndPoint + currentDate.toISOString();
-        const signature = CryptoJS.HmacSHA1(message, this.holidaySecretKey);
-        console.log(signature);
+
+        if (!this.signature || currentDate > this.expireDate) {
+            const expireDate = new Date(Date.now());
+            expireDate.setTime(expireDate.getTime() + (10 * 60 * 1000));
+
+            const message = this.holidayAccessKey + this.holidayEndPoint + expireDate.toISOString();
+            const signature = CryptoJS.HmacSHA1(message, this.holidaySecretKey);
+
+            this.signature = signature;
+            this.expireDate = expireDate;
+        }
 
         let urlParam: HttpParams = new HttpParams();
         const endPointUrl = ServiceExtension.mergeUrl(this.holidayServerUrl, this.holidayEndPoint);
@@ -53,8 +64,8 @@ export class HolidayService {
         urlParam = urlParam.append(VERSION_PARAM, VERSION_PARAM_VALUE);
         urlParam = urlParam.append(OUT_PARAM, OUT_PARAM_VALUE);
         urlParam = urlParam.append(ACCESS_KEY_PARAM, this.holidayAccessKey);
-        urlParam = urlParam.append(TIMESPAN_PARAM, currentDate.toISOString());
-        urlParam = urlParam.append(SIGNATURE_PARAM, CryptoJS.enc.Base64.stringify(signature));
+        urlParam = urlParam.append(EXPIRES_PARAM, this.expireDate.toISOString());
+        urlParam = urlParam.append(SIGNATURE_PARAM, CryptoJS.enc.Base64.stringify(this.signature));
         urlParam = urlParam.append(TYPES_PARAM, TYPES_PARAM_VALUE);
         return this.httpClient.get<HolidayCollection>(endPointUrl, { params: urlParam })
             .pipe(map((response: HolidayCollection) => {

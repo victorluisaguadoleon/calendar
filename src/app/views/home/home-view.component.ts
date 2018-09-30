@@ -30,12 +30,13 @@ export class HomeViewComponent implements OnInit {
      }
 
     ngOnInit() {
-        const date = new Date();
-        this.date = { date: { year: date.getFullYear(), month: date.getMonth(), day: date.getDay() } };
+        const date = new Date(Date.now());
+        this.date = {};
         this.numberOfDay = 0;
         this.countryCode = '';
         this.myDatePickerOptions = {
             dateFormat: 'dd/mm/yyyy',
+            firstDayOfWeek : 'su'
         };
 
         this.refreshCalendar();

@@ -34,8 +34,8 @@ import { HolidayService, HOLIDAY_SERVER_URL, HOLIDAY_END_POINT, HOLIDAY_ACCESS_K
   providers: [
     { provide: HOLIDAY_SERVER_URL, useValue: 'https://api.xmltime.com/' },
     { provide: HOLIDAY_END_POINT, useValue: 'holidays' },
-    { provide: HOLIDAY_ACCESS_KEY, useValue: '7YOmHFWQad' },
-    { provide: HOLIDAY_SECRET_KEY, useValue: 'dpDVm7scj4QWu82s7wTi' },
+    { provide: HOLIDAY_ACCESS_KEY, useValue: 'FgyVTBsRga' },
+    { provide: HOLIDAY_SECRET_KEY, useValue: 'cqXmmKYadXhEi4JO2XAH' },
     { provide: CalendarService, useClass: CalendarService },
     { provide: HolidayService, useClass: HolidayService },
   ],
