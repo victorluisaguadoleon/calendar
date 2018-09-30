@@ -4,6 +4,7 @@ import { Day } from '../../models/day.model';
 import {IMyDpOptions} from 'mydatepicker';
 import { MonthDays } from '../../models/month-days.model';
 import { DayType } from '../../models/day-type.model';
+import { Month } from '../../models/month.model';
 
 
 @Component({
@@ -41,8 +42,6 @@ export class HomeViewComponent implements OnInit {
     }
 
     public getWeeks(monthDays: MonthDays): any[] {
-        console.log(monthDays);
-
         const result = [];
         let week: Day[] = [];
         for (let i = 0; i < monthDays.days.length; i++) {
@@ -70,9 +69,12 @@ export class HomeViewComponent implements OnInit {
         const year = this.date.date.year;
 
         const result = this.calendarService.getMonths(day, month, year, this.numberOfDay);
-        console.log(result);
 
         return result;
+    }
+
+    private monthToStr(value: number): any {
+        return Month[value].split(/(?=[A-Z])/).join().replace(',', ' ');
     }
 
     private dayTypeToClass(value: number): any {

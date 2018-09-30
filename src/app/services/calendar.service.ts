@@ -11,7 +11,7 @@ export class CalendarService {
     private readonly monthDayCount: number[];
 
     constructor() {
-        this.monthRest = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4];
+        this.monthRest = [0, 3, 3, 6, 1, 4, 6, 2, 5, 0, 3, 5];
         this.monthDayCount = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     }
 
@@ -21,7 +21,6 @@ export class CalendarService {
 
     public getDays(day: number, month: number, year: number, numberOfDays: number): Day[] {
         let weekDay = this.getWeekDay(day, month, year);
-        console.log(weekDay);
         const result: Day[] = [];
 
         for (let i = 0; i < weekDay; i++) {
@@ -86,8 +85,17 @@ export class CalendarService {
         while (i < days.length) {
             if (days[i].dayType !== DayType.Invalid && days[i].month !== firstMonth.month) {
                 result.push(firstMonth);
+                for (let j = days[i].weekDay; j < 7; j++) {
+                    const invalidDay: Day = { weekDay: j, dayType: DayType.Invalid };
+                    firstMonth.days.push(invalidDay);
+                }
 
                 firstMonth = { month: 0, days: [], year: 0 };
+
+                for (let j = 0; j < days[i].weekDay; j++) {
+                    const invalidDay: Day = { weekDay: j, dayType: DayType.Invalid };
+                    firstMonth.days.push(invalidDay);
+                }
             }
 
             firstMonth.days.push(days[i]);
@@ -100,6 +108,11 @@ export class CalendarService {
         }
 
         result.push(firstMonth);
+        const lastDay = firstMonth.days[firstMonth.days.length - 1];
+        for (let j = lastDay.weekDay + 1; j < 7; j++) {
+            const invalidDay: Day = { weekDay: j, dayType: DayType.Invalid };
+            firstMonth.days.push(invalidDay);
+        }
 
         return result;
     }
@@ -113,20 +126,9 @@ export class CalendarService {
     }
 
     public getWeekDay(day: number, month: number, year: number): WeekDay {
-        const div1 = (year % 400) - ((year % 400) % 100);
-        const div2 = (((year % 400) % 100) - 1) - ((((year % 400) % 100) - 1) % 4);
+        const mod = (day + this.monthRest[month - 1] + (((year - 1) % 4) * 5)
+            + (((year - 1) % 100) * 4) + (((year - 1) % 400) * 6)) % 7;
 
-        let mod = (day + this.monthRest[month - 1] + ((div1 / 100) * 5)
-            + (div2 / 4) + (((year % 400) % 100) - 1)) % 7;
-
-        if ((year % 400 !== 0) && (year % 4 === 0)) {
-            if (month >= 3) {
-                mod = mod + 1;
-            } else {
-                mod = mod - 1;
-            }
-        }
-
-        return mod + 1;
+        return (CalendarService.isLeapYear(year) && month >= 3) ? mod + 1 : mod;
     }
 }

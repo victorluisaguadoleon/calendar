@@ -38,7 +38,7 @@
             <div class="weekday"><span>S</span></div>
           </div>
           <div class="month-year">
-            {{ monthDays.month }} {{ monthDays.year }}
+            {{ monthToStr(monthDays.month) }} {{ monthDays.year }}
           </div>
           <div class="month-days">
             <div *ngFor='let week of getWeeks(monthDays)' class="week">
