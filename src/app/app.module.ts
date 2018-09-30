@@ -13,7 +13,7 @@ import { routing } from './app.routing';
 import { HomeModule } from './views/home/home.module';
 
 import { CalendarService } from './services/calendar.service';
-import { HolidayService, HOLIDAY_SERVER_URL, HOLIDAY_END_POINT } from './services/holiday.service';
+import { HolidayService, HOLIDAY_SERVER_URL, HOLIDAY_END_POINT, HOLIDAY_ACCESS_KEY, HOLIDAY_SECRET_KEY } from './services/holiday.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,10 @@ import { HolidayService, HOLIDAY_SERVER_URL, HOLIDAY_END_POINT } from './service
   providers: [
     { provide: HOLIDAY_SERVER_URL, useValue: 'https://api.xmltime.com/' },
     { provide: HOLIDAY_END_POINT, useValue: 'holidays' },
+    { provide: HOLIDAY_ACCESS_KEY, useValue: '7YOmHFWQad' },
+    { provide: HOLIDAY_SECRET_KEY, useValue: 'dpDVm7scj4QWu82s7wTi' },
     { provide: CalendarService, useClass: CalendarService },
+    { provide: HolidayService, useClass: HolidayService },
   ],
   bootstrap: [AppComponent]
 })
