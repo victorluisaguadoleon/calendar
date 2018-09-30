@@ -1,9 +1,11 @@
 import { Inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import * as CryptoJS from 'crypto-js';
+import { map } from 'rxjs/operators';
 import { HolidayCollection } from '../models/holiday-collection.model';
 import { ServiceExtension } from './service-extension';
 import { Observable } from 'rxjs';
+import { SimpleDay } from '../models/simple-day.model';
 
 
 
@@ -23,6 +25,8 @@ export const EXPIRES_PARAM = 'expires';
 export const EXPIRES_TIME = 10;
 export const SIGNATURE_PARAM = 'signature';
 export const TIMESPAN_PARAM = 'timestamp';
+export const TYPES_PARAM = 'types';
+export const TYPES_PARAM_VALUE = 'all'; 
 
 export class HolidayService {
 
@@ -34,23 +38,46 @@ export class HolidayService {
 
     }
 
-    public getHolidays(year: number, countryCode: string): Observable<HolidayCollection> {
+    public getHolidays(year: number, countryCode: string): Observable<SimpleDay[]> {
         const currentDate = new Date(Date.now());
         console.log(currentDate.toISOString());
         const message = this.holidayAccessKey + this.holidayEndPoint + currentDate.toISOString();
         const signature = CryptoJS.HmacSHA1(message, this.holidaySecretKey);
         console.log(signature);
 
-        const urlParam: HttpParams = new HttpParams();
+        let urlParam: HttpParams = new HttpParams();
         const endPointUrl = ServiceExtension.mergeUrl(this.holidayServerUrl, this.holidayEndPoint);
 
-        urlParam.append(COUNTRY_PARAM, countryCode);
-        urlParam.append(YEAR_PARAM, year.toString());
-        urlParam.append(VERSION_PARAM, VERSION_PARAM_VALUE);
-        urlParam.append(OUT_PARAM, OUT_PARAM_VALUE);
-        urlParam.append(ACCESS_KEY_PARAM, this.holidayAccessKey);
-        urlParam.append(TIMESPAN_PARAM, currentDate.toISOString());
-        urlParam.append(SIGNATURE_PARAM, signature);
-        return this.httpClient.get<HolidayCollection>(endPointUrl, { params: urlParam });
+        urlParam = urlParam.append(COUNTRY_PARAM, countryCode);
+        urlParam = urlParam.append(YEAR_PARAM, year.toString());
+        urlParam = urlParam.append(VERSION_PARAM, VERSION_PARAM_VALUE);
+        urlParam = urlParam.append(OUT_PARAM, OUT_PARAM_VALUE);
+        urlParam = urlParam.append(ACCESS_KEY_PARAM, this.holidayAccessKey);
+        urlParam = urlParam.append(TIMESPAN_PARAM, currentDate.toISOString());
+        urlParam = urlParam.append(SIGNATURE_PARAM, CryptoJS.enc.Base64.stringify(signature));
+        urlParam = urlParam.append(TYPES_PARAM, TYPES_PARAM_VALUE);
+        return this.httpClient.get<HolidayCollection>(endPointUrl, { params: urlParam })
+            .pipe(map((response: HolidayCollection) => {
+                console.log(response);
+                const result: SimpleDay[] = [];
+                if (response.errors && response.errors.length > 0) {
+                    return result;
+                }
+
+                if (response.holidays && response.holidays.length > 0) {
+                    for (let i = 0; i < response.holidays.length; i++) {
+                        const holidayResp = response.holidays[i].date;
+                        const simpleDay: SimpleDay = {
+                            monthDay: holidayResp.datetime.day,
+                            month: holidayResp.datetime.month,
+                            year: holidayResp.datetime.year
+                        };
+
+                        result.push(simpleDay);
+                    }
+                }
+
+                return result;
+            }));
     }
 }

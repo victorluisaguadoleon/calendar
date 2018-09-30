@@ -5,6 +5,8 @@ import {IMyDpOptions} from 'mydatepicker';
 import { MonthDays } from '../../models/month-days.model';
 import { DayType } from '../../models/day-type.model';
 import { Month } from '../../models/month.model';
+import { HolidayService } from '../../services/holiday.service';
+import { SimpleDay } from '../../models/simple-day.model';
 
 
 @Component({
@@ -23,7 +25,8 @@ export class HomeViewComponent implements OnInit {
 
     public calendar: MonthDays[];
 
-    constructor(@Inject(CalendarService) public calendarService: CalendarService) {
+    constructor(@Inject(CalendarService) public calendarService: CalendarService,
+        @Inject(HolidayService) public holidayService: HolidayService) {
      }
 
     ngOnInit() {
@@ -39,7 +42,15 @@ export class HomeViewComponent implements OnInit {
     }
 
     public refreshCalendar() {
-        this.calendar = this.getCalendarMonthDays();
+        const newCalendar = this.getCalendarMonthDays();
+        if (this.countryCode && this.countryCode !== '') {
+            const years = this.getYears(newCalendar);
+            if (years.length <= 0) {
+                this.calendar = newCalendar;
+            }
+
+            this.setHolidays(newCalendar, years, this.countryCode, 0);
+        }
     }
 
     public getWeeks(monthDays: MonthDays): any[] {
@@ -80,5 +91,57 @@ export class HomeViewComponent implements OnInit {
 
     private dayTypeToClass(value: number): any {
         return DayType[value].split(/(?=[A-Z])/).join().replace(',', ' ').toLowerCase();
+    }
+
+    private getYears(months: MonthDays[]): number[] {
+        const result: number[] = [];
+        let currentYear = 0;
+        for (let i = 0; i < months.length; i++) {
+            const month = months[i];
+            if (currentYear !== month.year) {
+                result.push(month.year);
+
+                currentYear = month.year;
+            }
+        }
+
+        return result;
+    }
+
+    private setHolidays(months: MonthDays[], years: number[], countryCode: string, index: number) {
+        if (index >= years.length) {
+            this.calendar = months;
+            return;
+        }
+
+        const year = years[index];
+        this.holidayService.getHolidays(year, countryCode).subscribe((response: SimpleDay[]) => {
+            for (let i = 0; i < months.length; i++) {
+                const month = months[i];
+                if (month.year > year) {
+                    break;
+                }
+
+                for (let j = 0; j < month.days.length; j++) {
+                    const day = month.days[j];
+                    if (day.dayType === DayType.Invalid) {
+                        continue;
+                    }
+
+                    for (let k = 0; k < response.length; k++) {
+                        const holiday = response[k];
+                        if (day.monthDay === holiday.monthDay
+                            && day.month === holiday.month
+                            && day.year === holiday.year) {
+                            day.dayType = DayType.Holiday;
+                        }
+                    }
+                }
+            }
+
+            this.setHolidays(months, years, countryCode, index + 1);
+        }, error => {
+            this.calendar = months;
+        });
     }
 }
