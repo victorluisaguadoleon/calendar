@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
@@ -25,7 +24,6 @@ import { HolidayService, HOLIDAY_SERVER_URL, HOLIDAY_END_POINT, HOLIDAY_ACCESS_K
     CommonModule,
     HttpClientModule,
     routing,
-    BsDropdownModule.forRoot(),
     FormsModule,
 
     // Views
